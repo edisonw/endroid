@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="0.72" >
+
+    <ToggleButton
+        android:id="@+id/toggleButtonLED"
+        android:layout_width="500dp"
+        android:layout_height="200dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/right"
+        android:layout_toRightOf="@+id/left"
+        android:onClick="blinkLED"
+        android:text="Test" >
+
+    </ToggleButton>
+
+    <Button
+        android:id="@+id/left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/toggleButtonLED"
+        android:layout_alignBottom="@+id/toggleButtonLED"
+        android:layout_alignParentLeft="true"
+        android:text="LEFT" />
+
+    <Button
+        android:id="@+id/right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="RIGHT" />
+
+    <Button
+        android:id="@+id/up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleButtonLED"
+        android:layout_centerHorizontal="true"
+        android:text="UP" />
+
+    <Button
+        android:id="@+id/down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/up"
+        android:layout_below="@+id/toggleButtonLED"
+        android:text="DOWN" />
+
+</RelativeLayout>
