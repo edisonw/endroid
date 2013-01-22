@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.widget.Toast;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
@@ -40,6 +41,8 @@ public class AccessoryService extends Service {
 
   private final IBinder mBinder = new AccessoryServiceBinder();
 
+  protected UsbAccessory accessory;
+
   private static IntentFilter USB_PERMISSION_FILTER = new IntentFilter(ACTION_USB_PERMISSION);
 
   static {
@@ -53,6 +56,11 @@ public class AccessoryService extends Service {
     }
   }
 
+  public void reAttachLastAccessory() {
+    closeAccessory();
+    openAccessory(accessory);
+  }
+
   private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
     @Override
@@ -62,7 +70,7 @@ public class AccessoryService extends Service {
       if (ACTION_USB_PERMISSION.equals(action)) {
         SLog.d("Arduino attached.");
         synchronized (this) {
-          UsbAccessory accessory = UsbManager.getAccessory(intent);
+          accessory = UsbManager.getAccessory(intent);
           if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
             openAccessory(accessory);
           } else {
@@ -127,6 +135,7 @@ public class AccessoryService extends Service {
   }
 
   private void openAccessory(UsbAccessory accessory) {
+    Toast.makeText(getApplicationContext(), "Arduino connected.", Toast.LENGTH_SHORT).show();
     mFileDescriptor = mUsbManager.openAccessory(accessory);
     if (mFileDescriptor != null) {
       mAccessory = accessory;
@@ -140,6 +149,7 @@ public class AccessoryService extends Service {
   }
 
   private void closeAccessory() {
+    Toast.makeText(getApplicationContext(), "Arduino disconnected.", Toast.LENGTH_SHORT).show();
     SLog.i("Close Accessory.");
     try {
       mOutputStream = null;

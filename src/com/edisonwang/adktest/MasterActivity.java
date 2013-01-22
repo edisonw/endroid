@@ -63,7 +63,6 @@ public class MasterActivity extends FragmentActivity {
   protected void onResume() {
     super.onResume();
     bindWithAccessoryService();
-    mViewPager.setCurrentItem(1);
   }
 
   @Override
