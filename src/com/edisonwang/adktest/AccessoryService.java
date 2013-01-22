@@ -4,6 +4,8 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +27,10 @@ public class AccessoryService extends Service {
 
   private static final String ACTION_USB_PERMISSION = "com.google.android.DemoKit.action.USB_PERMISSION";
 
+  private static final int SERVER_PORT = 98328;
+
+  private static final String SERVER_IP = "192.168.99.198";
+
   private UsbManager mUsbManager;
 
   private ParcelFileDescriptor mFileDescriptor;
@@ -35,9 +41,9 @@ public class AccessoryService extends Service {
 
   private boolean mPermissionRequestPending;
 
-  private FileInputStream mInputStream;
+  private FileInputStream accInputStream;
 
-  private FileOutputStream mOutputStream;
+  private FileOutputStream accOutputStream;
 
   private final IBinder mBinder = new AccessoryServiceBinder();
 
@@ -88,6 +94,8 @@ public class AccessoryService extends Service {
     }
   };
 
+  private Socket serverSocket;
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -102,7 +110,7 @@ public class AccessoryService extends Service {
     SLog.d("Service onStart.");
 
     closeAccessory();
-    if (mInputStream != null && mOutputStream != null) {
+    if (accInputStream != null && accOutputStream != null) {
       // Should we do something else here?
       return START_STICKY;
     }
@@ -140,19 +148,41 @@ public class AccessoryService extends Service {
     if (mFileDescriptor != null) {
       mAccessory = accessory;
       FileDescriptor fd = mFileDescriptor.getFileDescriptor();
-      mInputStream = new FileInputStream(fd);
-      mOutputStream = new FileOutputStream(fd);
+      accInputStream = new FileInputStream(fd);
+      accOutputStream = new FileOutputStream(fd);
       SLog.d("accessory opened");
+      connectToServer();
     } else {
       SLog.e("accessory open fail");
     }
   }
 
+  public void connectToServer() {
+    try {
+      InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+      serverSocket = new Socket(serverAddr, SERVER_PORT);
+    } catch (IOException e) {
+      Toast.makeText(getApplicationContext(), "Cannot connect to server.", Toast.LENGTH_SHORT).show();
+      SLog.e(e.getMessage());
+    }
+
+  }
+
+  public void disconnectFromServer() {
+    Toast.makeText(getApplicationContext(), "Disconnect from server.", Toast.LENGTH_SHORT).show();
+    try {
+      serverSocket.close();
+    } catch (IOException e) {
+      Toast.makeText(getApplicationContext(), "Already disconnected from server.", Toast.LENGTH_SHORT).show();
+    }
+  }
+
   private void closeAccessory() {
+    disconnectFromServer();
     Toast.makeText(getApplicationContext(), "Arduino disconnected.", Toast.LENGTH_SHORT).show();
     SLog.i("Close Accessory.");
     try {
-      mOutputStream = null;
+      accOutputStream = null;
       if (mFileDescriptor != null) {
         mFileDescriptor.close();
       }
@@ -169,9 +199,9 @@ public class AccessoryService extends Service {
     buffer[0] = (byte)(i.value());
     SLog.d("write {} {}", i.name(), buffer[0]);
 
-    if (mOutputStream != null) {
+    if (accOutputStream != null) {
       try {
-        mOutputStream.write(buffer);
+        accOutputStream.write(buffer);
       } catch (IOException e) {
         SLog.e("write failed: " + e.getMessage());
       }
