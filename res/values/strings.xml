@@ -4,5 +4,9 @@
     <string name="app_name">AdkTest</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="title_section3">Information</string>
+    <string name="title_section2">Status</string>
+    <string name="title_section1">Motor Control</string>
+    <string name="title_activity_master">MasterActivity</string>
 
 </resources>

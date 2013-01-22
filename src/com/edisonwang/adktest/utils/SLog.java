@@ -7,7 +7,7 @@ import com.lslk.sleepbot.utils.sl4j.MessageFormatter;
 
 public class SLog {
 
-  private static final String TAG = "sleepbot.";
+  private static final String TAG = "Endroid.";
 
   private static final boolean DEBUG = true;
 

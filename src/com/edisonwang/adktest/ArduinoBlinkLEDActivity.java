@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -22,10 +21,9 @@ import android.widget.ToggleButton;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
+import com.edisonwang.adktest.utils.SLog;
 
 public class ArduinoBlinkLEDActivity extends Activity {
-
-  private static final String TAG = "Endroid";
 
   private static final String ACTION_USB_PERMISSION = "com.google.android.DemoKit.action.USB_PERMISSION";
 
@@ -64,7 +62,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
           if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
             openAccessory(accessory);
           } else {
-            Log.d(TAG, "permission denied for accessory " + accessory);
+            SLog.d("permission denied for accessory: {}", accessory);
           }
           mPermissionRequestPending = false;
         }
@@ -107,7 +105,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
           send(3);
         }
-        return true;
+        return false;
       }
 
     });
@@ -122,7 +120,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
           send(5);
         }
-        return true;
+        return false;
       }
 
     });
@@ -137,7 +135,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
           send(7);
         }
-        return true;
+        return false;
       }
 
     });
@@ -152,7 +150,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
           send(9);
         }
-        return true;
+        return false;
       }
 
     });
@@ -191,7 +189,7 @@ public class ArduinoBlinkLEDActivity extends Activity {
         }
       }
     } else {
-      Log.d(TAG, "mAccessory is null");
+      SLog.d("mAccessory is null");
     }
   }
 
@@ -214,9 +212,9 @@ public class ArduinoBlinkLEDActivity extends Activity {
       FileDescriptor fd = mFileDescriptor.getFileDescriptor();
       mInputStream = new FileInputStream(fd);
       mOutputStream = new FileOutputStream(fd);
-      Log.d(TAG, "accessory opened");
+      SLog.d("accessory opened");
     } else {
-      Log.d(TAG, "accessory open fail");
+      SLog.d("accessory open fail");
     }
   }
 
@@ -235,19 +233,18 @@ public class ArduinoBlinkLEDActivity extends Activity {
   public synchronized void send(int i) {
     byte[] buffer = new byte[1];
     buffer[0] = (byte)i;
-    Log.d(TAG, "write: " + buffer[0]);
+    SLog.d("write: " + buffer[0]);
 
     if (mOutputStream != null) {
       try {
         mOutputStream.write(buffer);
       } catch (IOException e) {
-        Log.e(TAG, "write failed", e);
+        SLog.e("write failed", e);
       }
     }
   }
 
   public void blinkLED(View v) {
-
     if (buttonLED.isChecked()) {
       send(0);
     } else {

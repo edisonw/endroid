@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_weight="0.72" >
@@ -12,10 +11,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/right"
         android:layout_toRightOf="@+id/left"
-        android:onClick="blinkLED"
-        android:text="Test" >
-
-    </ToggleButton>
+        android:onClick="blinkLED" />
 
     <Button
         android:id="@+id/left"
